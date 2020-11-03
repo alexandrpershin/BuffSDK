@@ -3,4 +3,10 @@
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="message_internet_error">Internet connection appears to be offline</string>
+    <string name="error_message_unexpected_server_error">Unexpected server error occurred.</string>
+    <string name="error_message__server_error"> server error occurred.</string>
+    <string name="error_message_unexpected_error">Unexpected error occurred</string>
+
 </resources>
