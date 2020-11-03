@@ -17,7 +17,6 @@ abstract class BaseViewModel : ViewModel() {
     val errorNotifier
         get() = _errorNotifier
 
-
     @UiThread
     fun notifyError(error: ErrorType) {
         _errorNotifier.value = error

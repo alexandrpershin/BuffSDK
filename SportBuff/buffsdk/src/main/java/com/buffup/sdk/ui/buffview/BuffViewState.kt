@@ -7,8 +7,8 @@ import com.buffup.sdk.model.BuffModel
  * */
 
 sealed class BuffViewState {
-    class InitialShow(val data: BuffModel) : BuffViewState()
+    data class InitialShow(val data: BuffModel) : BuffViewState()
     object AnswerSelected : BuffViewState()
     object Timeout : BuffViewState()
-    object CloseClicked : BuffViewState()
+    object Close : BuffViewState()
 }

@@ -14,6 +14,7 @@ import com.buffup.sdk.utils.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -24,10 +25,11 @@ import kotlin.random.Random
 
 class BuffViewModel(
     private val buffRepository: BuffRepository,
-    private var isFetchDataActive: Boolean = false,
-    private var isShowViewTimerActive: Boolean = false,
     private val coroutineContext: CoroutineContext = Dispatchers.Main
 ) : BaseViewModel() {
+
+    private var isFetchDataActive: AtomicBoolean = AtomicBoolean(false)
+    private var isShowViewTimerActive: AtomicBoolean = AtomicBoolean(false)
 
     /**
      * LiveData which notify View about state changed
@@ -45,25 +47,24 @@ class BuffViewModel(
     val showViewTimerLiveData: LiveData<Int>
         get() = _showViewTimerLiveData
 
-
     /**
      * Starts if not have been started yet.
-     * Asks backend every [INTERVAL_SECONDS_SHOW] seconds for new portion of data
+     * Asks backend every [INTERVAL_BEFORE_FETCH_DATA] seconds for new portion of data
      * Works forever while [stopFetchData] or [stop]  method was called
      * */
 
-    fun startFetchData() {
-        if (!isFetchDataActive) {
-            isFetchDataActive = true
+    internal fun startFetchData() {
+        if (!isFetchDataActive.get()) {
+            isFetchDataActive.set(true)
 
             viewModelScope.launch(coroutineContext) {
-                delay(TEN_SECOND)
+                delay(INITIAL_DELAY)
 
                 var countDownSeconds = 0
-                while (isFetchDataActive) {
+                while (isFetchDataActive.get()) {
                     if (countDownSeconds <= 0) {
                         fetchNextBuff()
-                        countDownSeconds = INTERVAL_SECONDS_SHOW
+                        countDownSeconds = INTERVAL_BEFORE_FETCH_DATA
                     }
                     countDownSeconds--
                     delay(ONE_SECOND)
@@ -79,21 +80,23 @@ class BuffViewModel(
      * */
 
     private fun startTimer(seconds: Int) {
-        isShowViewTimerActive = true
+        if (!isShowViewTimerActive.get()) {
+            isShowViewTimerActive.set(true)
 
-        viewModelScope.launch(coroutineContext) {
-            var countDownSeconds = seconds
+            viewModelScope.launch(coroutineContext) {
+                var countDownSeconds = seconds
 
-            while (isShowViewTimerActive) {
-                _showViewTimerLiveData.value = countDownSeconds
+                while (isShowViewTimerActive.get()) {
+                    _showViewTimerLiveData.value = countDownSeconds
 
-                if (countDownSeconds <= 0) {
-                    _stateLiveData.value = BuffViewState.Timeout
-                    stopTimer()
+                    if (countDownSeconds <= 0) {
+                        _stateLiveData.value = BuffViewState.Timeout
+                        stopTimer()
+                    }
+
+                    countDownSeconds--
+                    delay(ONE_SECOND)
                 }
-
-                countDownSeconds--
-                delay(ONE_SECOND)
             }
         }
     }
@@ -106,7 +109,7 @@ class BuffViewModel(
 
     private fun stopTimer() {
         Logger.logInfo(TAG, "stopTimer()")
-        isShowViewTimerActive = false
+        isShowViewTimerActive.set(false)
     }
 
     /**
@@ -115,7 +118,7 @@ class BuffViewModel(
 
     private fun stopFetchData() {
         Logger.logInfo(TAG, "stopFetchData()")
-        isFetchDataActive = false
+        isFetchDataActive.set(false)
     }
 
     /**
@@ -147,8 +150,8 @@ class BuffViewModel(
      * User clicked on close button on [BuffView]
      * */
 
-    fun onCloseClicked() {
-        _stateLiveData.value = BuffViewState.CloseClicked
+    internal fun onCloseClicked() {
+        _stateLiveData.value = BuffViewState.Close
         stopTimer()
     }
 
@@ -156,7 +159,7 @@ class BuffViewModel(
      * User clicked on one of answers of [BuffView]
      * */
 
-    fun onAnswerSelected(answer: Answer) {
+    internal fun onAnswerSelected(answer: Answer) {
         // update answer on server
         _stateLiveData.value = BuffViewState.AnswerSelected
         stopTimer()
@@ -170,18 +173,19 @@ class BuffViewModel(
 
     /**
      * Called to stop or pause work of Sdk
-    * */
+     * */
 
     fun stop() {
         stopFetchData()
         stopTimer()
+        _stateLiveData.value = BuffViewState.Close
         Logger.logInfo(TAG, "stop() called")
     }
 
     companion object {
-        private const val INTERVAL_SECONDS_SHOW = 30
-        private const val ONE_SECOND = 1_000L
-        private const val TEN_SECOND = 10_000L
+        const val ONE_SECOND = 1_000L
+        const val INTERVAL_BEFORE_FETCH_DATA = 30
+        const val INITIAL_DELAY = 10_000L
     }
 
 }

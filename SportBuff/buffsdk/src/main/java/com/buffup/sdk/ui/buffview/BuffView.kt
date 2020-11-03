@@ -130,7 +130,7 @@ class BuffView : BaseView<BuffViewBinding, BuffViewModel>, LifecycleObserver {
                  * */
 
 
-                BuffViewState.CloseClicked -> {
+                BuffViewState.Close -> {
                     binding.root.slideDown()
                 }
             }
