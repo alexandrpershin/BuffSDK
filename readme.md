@@ -4,13 +4,13 @@
 
 ## About the app 
 
-The app provides SDK with custom view named BuffView.
+The app provides an SDK with a custom view named BuffView.
 BuffView is custom view which provides to client dialog with questions and answers.
-Client can use BuffView in xml layout.
+Client can use BuffView in XML layout.
 
 Important things to keep in mind before use:
 
-Use BuffView.initialize() to set up error callback and optional success callback.
+Use BuffView.initialize() method to passs the error callback and optional success callback.
 This method will start work of SDK.
 
 Use BuffView.onPause(), BuffView.stop() and BuffView.resume() to stop/pause and resume work
@@ -37,4 +37,5 @@ of SDK. These methods should be called from client side in case when Activity/Fr
 6. After the user has selected the option, the timer freezes and the BuffView is hidden with a delay of 2 seconds.
 7. If the user pressed the close button, BuffView will hide immediately.
 8. If the user hasn't clicked anything, BuffView will disappear when the timer expires.  
+9. Sdk allows to pas clients errorCallback to handle SDK errors on client side.
 
