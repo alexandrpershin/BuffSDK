@@ -4,9 +4,11 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.buffup.sdk.api.TaskResult
 import com.buffup.sdk.api.repository.BuffRepository
+import com.buffup.sdk.api.response.BuffResponse
 import com.buffup.sdk.di.JsonUtils
 import com.buffup.sdk.di.testModule
 import com.buffup.sdk.model.Answer
+import com.buffup.sdk.model.BuffModel
 import com.buffup.sdk.model.toModel
 import com.buffup.sdk.ui.buffview.BuffViewModel
 import com.buffup.sdk.ui.buffview.BuffViewModel.Companion.INITIAL_DELAY
@@ -30,7 +32,7 @@ import org.koin.test.get
 
 class BuffViewModelTest : KoinTest {
 
-    val testCoroutineDispatcher = TestCoroutineDispatcher()
+    private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
     private val module = module {
         factory { BuffViewModel(get(), testCoroutineDispatcher) }
@@ -43,9 +45,15 @@ class BuffViewModelTest : KoinTest {
     @JvmField
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    private lateinit var buffResponse: BuffResponse
+
+    private lateinit var buffModel: BuffModel
 
     @Before
     fun initDependencies() {
+        buffResponse = JsonUtils.provideTestBuffResponse()
+        buffModel = buffResponse.toModel()
+
         MockKAnnotations.init(this)
         startKoin { modules(listOf(testModule, module)) }
     }
@@ -58,8 +66,6 @@ class BuffViewModelTest : KoinTest {
     @Test
     fun `test initial delay before fetch data from server`() =
         runBlockingTest(testCoroutineDispatcher) {
-            val buffResponse = JsonUtils.provideTestBuffResponse()
-            val buffModel = buffResponse.toModel()
 
             coEvery { get<BuffRepository>().getNextBuff(any()) } returns TaskResult.SuccessResult(
                 buffResponse
@@ -96,9 +102,6 @@ class BuffViewModelTest : KoinTest {
 
     @Test
     fun `test timeout state`() = runBlockingTest(testCoroutineDispatcher) {
-        val buffResponse = JsonUtils.provideTestBuffResponse()
-        val buffModel = buffResponse.toModel()
-
         coEvery { get<BuffRepository>().getNextBuff(any()) } returns TaskResult.SuccessResult(
             buffResponse
         )
@@ -120,9 +123,6 @@ class BuffViewModelTest : KoinTest {
 
     @Test
     fun `test fetch data time interval state`() = runBlockingTest(testCoroutineDispatcher) {
-        val buffResponse = JsonUtils.provideTestBuffResponse()
-        val buffModel = buffResponse.toModel()
-
         coEvery { get<BuffRepository>().getNextBuff(any()) } returns TaskResult.SuccessResult(
             buffResponse
         )
@@ -146,8 +146,6 @@ class BuffViewModelTest : KoinTest {
     @Test
     fun `test timer started once data fetched from server`() =
         runBlockingTest(testCoroutineDispatcher) {
-            val buffResponse = JsonUtils.provideTestBuffResponse()
-            val buffModel = buffResponse.toModel()
 
             coEvery { get<BuffRepository>().getNextBuff(any()) } returns TaskResult.SuccessResult(
                 buffResponse
@@ -171,8 +169,6 @@ class BuffViewModelTest : KoinTest {
     @Test
     fun `test all work was stopped when stop() called`() =
         runBlockingTest(testCoroutineDispatcher) {
-            val buffResponse = JsonUtils.provideTestBuffResponse()
-            val buffModel = buffResponse.toModel()
 
             coEvery { get<BuffRepository>().getNextBuff(any()) } returns TaskResult.SuccessResult(
                 buffResponse

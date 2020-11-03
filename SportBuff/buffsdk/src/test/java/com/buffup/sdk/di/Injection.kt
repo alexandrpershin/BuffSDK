@@ -12,6 +12,4 @@ import org.koin.dsl.module
  */
 val testModule = module {
     single { mockk<BuffRepository>(relaxed = true) }
-//    single<BuffResponse> { JsonUtils.provideTestBuffResponse() }
-//    single<BuffModel> { get<BuffResponse>().toModel() }
 }

@@ -6,11 +6,9 @@ import com.google.gson.Gson
 object JsonUtils {
     val gson = Gson()
 
-
     fun provideTestBuffResponse(): BuffResponse {
         return gson.fromJson(buffJsonResponse, BuffResponse::class.java)
     }
-
 
     private val buffJsonResponse = "{\n" +
             "  \"result\": {\n" +
