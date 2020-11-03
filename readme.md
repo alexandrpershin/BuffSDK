@@ -31,7 +31,7 @@ Of SDK. These methods should be called from client side in case when Activity/Fr
 
 1. The client uses BuffView on its side and calls BuffView.initialize ()
 2. The SDK waits for an initial delay and makes a request to the backend to get the data.
-3. Once the data is received, it is analyzed and displayed to the client using BuffView.
+3. Once the data is received, it is parsed and displayed to the client using BuffView.
 4. This happens every 30 seconds while BuffView.stop () is called.
 5. After BuffView is displayed, the user is given n seconds to read the question and select one of the answer options.
 6. After the user has selected the option, the timer freezes and the BuffView is hidden with a delay of 2 seconds.
