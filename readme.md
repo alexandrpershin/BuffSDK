@@ -1,9 +1,6 @@
 
 # Solution summary
 
-## The screens
-
-Hi there! Thank you very much for your time to create this test assessment and for checking my solution.
 
 ## About the app 
 
