@@ -163,6 +163,14 @@ class BuffView : BaseView<BuffViewBinding, BuffViewModel>, LifecycleObserver {
     }
 
     /**
+     * Stops work of SDK (for any client's reason)
+     * */
+
+    fun stop() {
+        viewModel.stop()
+    }
+
+    /**
      * Resume work of SDK (ex. because of client Fragment/Activity resumed)
      * */
 
