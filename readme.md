@@ -6,15 +6,15 @@
 
 The app provides SDK with custom view named BuffView.
 BuffView is custom view which provides to client dialog with questions and answers.
-Clint can use BuffView as xml in layout.
+Client can use BuffView in xml layout.
 
 Important things to keep in mind before use:
 
 Use BuffView.initialize() to set up error callback and optional success callback.
 This method will start work of SDK.
 
-Use BuffView.onPause(),BuffView.stop() and BuffView.resume() to stop/pause and resume work
-Of SDK. These methods should be called from client side in case when Activity/Fragment was stopped/paused or resumed.
+Use BuffView.onPause(), BuffView.stop() and BuffView.resume() to stop/pause and resume work
+of SDK. These methods should be called from client side in case when Activity/Fragment was stopped/paused or resumed.
  
 
 ## Tech stack
